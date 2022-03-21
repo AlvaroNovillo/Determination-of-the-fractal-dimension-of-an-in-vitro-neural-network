@@ -1,9 +1,7 @@
 %Save data
 %Create a database of the Correlation Functions
 clear all
-% DIVS=[0     1     2     4     7     9    11    16    18];
-DIVS=[11    16    18];
-% DIVS=1;
+DIVS=[0     1     2     4     7     9    11    16    18];
 n_0 = 0;
 r = exp(1:0.05:9); %Study region
 for i=1:length(DIVS)
