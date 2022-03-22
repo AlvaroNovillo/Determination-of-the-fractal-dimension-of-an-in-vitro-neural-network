@@ -1,12 +1,12 @@
 clear all
 %Results
-DIVS=[0     1     2     4     7     9    11    16    18];
+DIVS = [0	1	2	3	4	5	6	7	8	9	10	11	12	13	14 16 18];
 %Parameters for the filter
-k = [4 2 4 4 4 4 4 7 2];%Order of the local maxima
-n = [4 3 2 7 6 5 2 2 2]; %File we want to take
+k = [4 2 4 3 4 5 6 4 6 4 6 4 9 4 6 7 2]; %Order of the local maxima
+n = [4 3 3 3 7 2 3 6 2 5 2 2 2 2 2 2 2]; %File we want to take
 
 for i=1:length(DIVS)
-    DIVS(i)
+    div = DIVS(i)
     %Reads how many files have been recorded per DIV
     dum=sprintf('Fractal_Cm/DIV%d_.mat',DIVS(i));
     files=load(dum);
