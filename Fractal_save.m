@@ -39,25 +39,6 @@ function paint(r,Cm,int,DIVS)
 end
 
 
-function slope = PartialSlopes(r,Cm,h)
-    %Compute several linear fits in our graphs    
-    % %Arguments: r ->Study region
-    %           Cm ->Correlation Sum
-    %           h-> Array denoting the intervals where the fits are going
-    %           to be made
-    
-    slope = zeros(1,length(h));
-    for g = 1:length(h)-1
-        r_int = log(r(h(g):h(g+1)));
-        P_5 = polyfit(r_int,log(Cm(1,h(g):h(g+1))),1);
-        slope(g) = P_5(1);
-    end
-    slope(slope>2.5) = 0; %Filter values of the slope > 2
-    slope(slope<0) = 0; %Filter negative slope values
-    
-end
-
-
 %Fit
 function [frac_dim,delta] = fractalfit(r_int,Cm,int)
     %Computation of the fit
