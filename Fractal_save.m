@@ -1,7 +1,7 @@
-clear all
+ clear all
 %Scaling of the networks and fitting interval visualizer.
 % All DIVS studied
-DIVS = [0	1	2	3	4	5	6	7	8	9	10	11	12	13	14 16 18];
+DIVS = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,18];
 %We can represent their fractal dimension with them with fractal_paint.m
 
 r = exp(1:0.05:9); %Study region
