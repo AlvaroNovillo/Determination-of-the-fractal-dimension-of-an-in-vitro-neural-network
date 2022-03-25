@@ -1,21 +1,23 @@
 %Save data
 %Create a database of the Correlation Functions
 clear all
-DIVS=[0     1     2     4     7     9    11    16    18];
-n_0 = 0;
+DIVS = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,18];
+
 r = exp(1:0.05:9); %Study region
 for i=1:length(DIVS)
+    div = DIVS(i)
+    n_0 = 0;
     %Reads how many files have been recorded per DIV
     dum=sprintf('dataPLOS/*DIV%d_*.mat',DIVS(i));
     files=dir(dum);
     nf=length(files);
-    Cm_DIV = zeros(length(r),nf+1);
+    Cm_DIV = zeros(5,length(r),nf); %Embbeding x length(r) x number of archives
     for n=1:nf
     %Reads the files corresponding to such DIV
         filename=horzcat(files(n).folder,'/',files(n).name);
         data=load(filename);
         
-        %extraes la red
+        %Net extraction
         AF=data.net.FULL_ADJACENCY; %Matriz de adyacencia completa, que incluye neuronas + bifurcaciones
         %Posición espacial de los nodos 
         xc=data.net.CLUSTER_CENTROID(:,1);
@@ -29,9 +31,17 @@ for i=1:length(DIVS)
         %Buscamos el subgrafo con las componentes conexas  
         GF=graph(AF,'omitselfloops');
         %El subgrafo de la GF
+%         Main cluster
+%         [bin,binsize] = conncomp(GF);
+%         idx = binsize(bin) == max(binsize);
+%         GCF = subgraph(GF, idx);
+
+%         Second cluster
         [bin,binsize] = conncomp(GF);
-        idx = binsize(bin) == max(binsize);
+        second_component = sort(unique(binsize(bin)),'descend');
+        idx = binsize(bin)  == second_component(2);
         GCF = subgraph(GF, idx);
+        
         %Posicion de los nodos de la componente gigante
         X = X(find(idx));
         Y = Y(find(idx));
@@ -40,18 +50,17 @@ for i=1:length(DIVS)
         AdGCF = adjacency(GCF); %De la componente gigante
         
         %Random Walker
-        rng(123); %Seed of the random walker fixed
         n_0 = initial_node(AdGCF,n_0); %Aleatory initial node
-        N = numnodes(GCF); %Length of the RW
+        N = 100*numnodes(GCF); %Length of the RW
         walk = rand_walk(AdGCF,N,n_0); %Random Walker initiation
         tic
-        Cm = EmbDim(5,N,walk,X,Y,r); %Computes the Corr. Sum 
+        Cm = EmbDim(5,N,walk,X,Y); %Computes the Corr. Sum 
         toc
-        Cm_DIV(:,1) = r;
-        Cm_DIV(:,n+1) = Cm';
+        Cm_DIV(:,:,n) = Cm;
+        
 
     end
-    save(sprintf('Fractal_Cm/DIV%d_.mat',DIVS(i)'),"Cm_DIV");
+    save(sprintf('Fractal_Cm_2_cluster/DIV%d_.mat',DIVS(i)'),"Cm_DIV");
 
 end
 %%
@@ -63,15 +72,15 @@ function n_0 = initial_node(AdGCF,n_0)
     end
     
 end
-function Cm = EmbDim(Emb,N,walk,X,Y,r)
+function Cm = EmbDim(Emb,N,walk,X,Y)
 %Algorithm to compute the Correlation Sum
-    for m = Emb
+    for m = 1:Emb
         j = 1;
         V = zeros(N-m,m);
         for i = 1:N-m
             V(i,:) = walk(i:i+m-1); %Serie temporal
         end
-        for r=r
+        for r=exp(1:0.05:9)
             drawnow;
             d = 0;
             heaviside = 0;
@@ -87,7 +96,7 @@ function Cm = EmbDim(Emb,N,walk,X,Y,r)
                 aux = r-max(C');
                 heaviside = heaviside+sum(aux >= 0);
             end
-            Cm(1,j) = 2*heaviside/((N-m)*(N-m+1));
+            Cm(m,j) = 2*heaviside/((N-m)*(N-m+1));
             j = j + 1;
         end
     end
