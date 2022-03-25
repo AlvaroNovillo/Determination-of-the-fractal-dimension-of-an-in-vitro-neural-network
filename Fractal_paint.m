@@ -1,7 +1,8 @@
 clear all
 %Study of the evolution of the fractal dimension per DIV
-% DIVS = [0	1	2	3	4	5	6	7	8	9	10	11	12	13	14 16 18];
-DIVS = 0:5;
+DIVS = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,18];
+
+
 r = exp(1:0.05:9); %Study region
 for i=1:length(DIVS)
     %Reads how many files have been recorded per DIV
@@ -18,10 +19,15 @@ for i=1:length(DIVS)
         end
     end
     %Mean of the fractal dimension per m
-    frac_dim(:,nf+1) = mean(frac_dim,2);
-    delta(:,nf+1) = sqrt(mean(delta,2).^2 + (tinv(.95,nf)*sqrt(1/(nf-1)*sum(sum(delta-mean(delta,2))).^2)).^2);
-    mean_frac_dim(:,i) =  frac_dim(:,nf+1);
-    mean_delta(:,i) = delta(:,nf+1);
+    if nf > 1
+        frac_dim(:,nf+1) = mean(frac_dim,2);
+        delta(:,nf+1) = sqrt(mean(delta,2).^2 + (tinv(.95,nf)*sqrt(1/(nf-1)*sum(sum(delta-mean(delta,2))).^2)).^2);
+        mean_frac_dim(:,i) =  frac_dim(:,nf+1);
+        mean_delta(:,i) = delta(:,nf+1);
+    else
+        mean_frac_dim(:,i) =  frac_dim(:,nf);
+        mean_delta(:,i) = delta(:,nf);
+    end
 end
 figure();
 hold all;
