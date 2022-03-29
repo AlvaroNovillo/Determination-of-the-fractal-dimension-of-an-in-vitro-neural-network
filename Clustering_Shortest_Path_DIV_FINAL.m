@@ -18,11 +18,7 @@ for i=1:length(DIVS)
         
         %Buscamos el subgrafo con las componentes conexas  
         GF=graph(AF,'omitselfloops');
-        %El subgrafo de la GF
-        [bin,binsize] = conncomp(GF);
-        idx = binsize(bin) == max(binsize);
-        GCF = subgraph(GF, idx);
-                    
+
         %Adjacency matrix for the Full Graph
         AdGCF = adjacency(GCF); %De la componente gigante
                   
