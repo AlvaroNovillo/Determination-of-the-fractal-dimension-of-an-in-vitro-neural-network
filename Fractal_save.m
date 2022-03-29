@@ -18,12 +18,19 @@ for i=1:length(DIVS)
             Cm = files.Cm_DIV(m,:,n);
             %Filter the data
             Cm = smoothdata(Cm,'lowess',6); 
-            [r_int,int] = new_filter(r,Cm);
+            [r_int,int,A] = new_filter(r,Cm);
             hold all;
             paint(r,Cm,int,DIVS) %Paints Cm(r) vs r
 %             [frac_dim(m,n),delta(m,n)] = fractalfit(r_int,Cm,int); %Computes the corr.dimension as a function of m.
         end
         legend('m=1','','m=2','','m=3','','m=4','', 'm=5','Fit interval','Location','Best');
+        hold off;
+%         Visualization of the algorithim
+        figure();
+        plot(A)
+        hold on;
+        plot(int,A(int),'r-o')
+        legend('Cm differences (m=5)','Fit interval')
         hold off;
     end
 end
@@ -53,7 +60,7 @@ function [frac_dim,delta] = fractalfit(r_int,Cm,int)
 
 end
 
-function [r_int,int] = new_filter(r,Cm)
+function [r_int,int,A] = new_filter(r,Cm)
     A = diff(Cm);
 %     [psor,lsor] = findpeaks(A,'SortStr','descend');
     %get the last interval where nonzero elements are
@@ -63,11 +70,5 @@ function [r_int,int] = new_filter(r,Cm)
     upper = max(gt);
     int = lower:upper; %Interval where the fit is performed
     r_int = log(r(int)); %Differential section of r where the fit is performed 
-%     Visualization of the alorithim
-%     figure();
-%     plot(A)
-%     hold on;
-%     plot(int,A(int),'r-o')
-%     legend('Cm differences','Fit interval')
-%     hold off;
+
 end
