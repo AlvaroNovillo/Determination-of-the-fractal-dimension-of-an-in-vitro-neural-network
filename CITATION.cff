@@ -1,0 +1,20 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Determination of the fractal dimension of an
+  in-vitro neural network
+message: >-
+  Characterization of the fractal dimension of
+  self-organized CNNs in time and space. To do so, we
+  extend the concept of correlation dimension of
+  complex systems to a spatial neural network using
+  random walker trayectories that explores the red
+  and creates a temporal series
+type: software
+authors:
+  - given-names: Álvaro Novillo Correas
+    name-particle: Álvaro
+    family-names: Novillo Correas
+    email: alvanovi@ucm.es
