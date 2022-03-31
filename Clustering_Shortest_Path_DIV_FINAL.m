@@ -119,7 +119,7 @@ function topo_paint(DIVS,C_GC_mean,dist_GC_mean,errC_GC,errdist_GC,C_GF_mean,dis
     e1 = errorbar(ax(1),DIVS,C_GC_mean,errC_GC,'o');
     e1.Color = [0 0.4470 0.7410];
     set(ax(1),'YColor',[0 0 0])
-%     set(ax(1),'xlim',[0 max(DIVS)],'ylim', [0,0.3],'yticklabel',[0:0.3],'ytick',[0:0.3])
+
     ylabel(ax(1),'Mean Clustering Coeff.')
     
     hold off;
@@ -129,7 +129,7 @@ function topo_paint(DIVS,C_GC_mean,dist_GC_mean,errC_GC,errdist_GC,C_GF_mean,dis
     e2 = errorbar(ax(2),DIVS,dist_GC_mean,errdist_GC,'s');
     e2.Color = [0.8500 0.3250 0.0980];
     set(ax(2),'YColor',[0 0 0])
-%     set(ax(2),'xlim',[0 max(DIVS)],'ylim', [0,0.3],'yticklabel',[0:0.3],'ytick',[0:0.3])
+
     ylabel(ax(2),'Mean Path Length.') 
     
     hold off
@@ -153,7 +153,7 @@ function topo_paint(DIVS,C_GC_mean,dist_GC_mean,errC_GC,errdist_GC,C_GF_mean,dis
     e1 = errorbar(ax(1),DIVS,C_GF_mean,errC_GF,'o');
     e1.Color = [0 0.4470 0.7410];
     set(ax(1),'YColor',[0 0 0])
-%     set(ax(1),'xlim',[0 max(DIVS)],'ylim', [0,0.2],'yticklabel',[0:0.2],'ytick',[0:0.2])
+
     ylabel(ax(1),'Mean Clustering Coeff.')
     
     hold off;
@@ -163,7 +163,7 @@ function topo_paint(DIVS,C_GC_mean,dist_GC_mean,errC_GC,errdist_GC,C_GF_mean,dis
     e2 = errorbar(ax(2),DIVS,dist_GF_mean,errdist_GF,'s');
     e2.Color = [0.8500 0.3250 0.0980];
     set(ax(2),'YColor',[0 0 0])
-%     set(ax(2),'xlim',[0 max(DIVS)],'ylim', [0,0.2],'yticklabel',[0:0.2],'ytick',[0:0.2])
+
     ylabel(ax(2),'Mean Path Length.') 
     
     hold off
