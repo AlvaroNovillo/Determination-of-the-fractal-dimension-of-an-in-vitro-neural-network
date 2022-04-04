@@ -3,19 +3,39 @@
 %K average degree: número de enlaces que tiene con otros nodos.
 % beta es la probabilidad de "recablear" los enlaces inicialmente asignados a un nodo en la estructura anillo
 % beta = 0 is a ring lattice, and beta = 1 is a random graph.
-%%
-SmallWorld(282,14)
+%h2 = WattsStrogatz(10,1,0)
+openExample('matlab/BuildWattsStrogatzSmallWorldGraphModelExample')
+%% 
+% Study of C. elegans network using W-S model.
 
-h2 = WattsStrogatz(282,14,0.15);
-plot(h2,'NodeColor','k','EdgeAlpha',0.2);
-title('Watts-Strogatz Graph with $N = 282$ nodes, $K = 14$, and $\beta = 0.15$', ...
+clear all;
+SmallWorld(282,14)
+%%
+%Watts Strogatz rewiring method visualization
+h2 = WattsStrogatz(50,3,0.0000000);
+figure();
+hold on;
+t = tiledlayout(1,3,'TileSpacing','Compact');
+nexttile
+plot(h2,'o','MarkerSize',4,'NodeLabel', {},'NodeColor','k','EdgeColor',[17 17 17]/255);
+title('$p = 0$','Interpreter','latex')
+nexttile
+h3 = WattsStrogatz(50,3,10^(-1.5));
+plot(h3,'o','MarkerSize',4,'NodeLabel', {},'NodeColor','k','EdgeColor',[17 17 17]/255);
+title('$p = 0.0316$','Interpreter','latex')
+nexttile
+h4 = WattsStrogatz(50,3,0.5);
+plot(h4,'o','MarkerSize',4,'NodeLabel', {},'NodeColor','k','EdgeColor',[17 17 17]/255);
+hold off;
+title('$p = 0.5$','Interpreter','latex')
+title(t, 'Watts-Strogatz Graph with $N = 50$ nodes, $K = 3$', ...
     'Interpreter','latex')
     
-%%
+%% 
+% 
+
 function SmallWorld(n,k)
-
-openExample('matlab/BuildWattsStrogatzSmallWorldGraphModelExample')
-
+%Numerical simulation of Watts-Strogatz model
 %Calculamos el factor de normalización
 
 G_0 = WattsStrogatz(n,k,0);
@@ -37,6 +57,8 @@ p(colToDelete) = [];
 
 C_mean_array = [];
 d_mean_array = [];
+C_total = [];
+d_total = [];
 
 for j=1:20
 
@@ -59,7 +81,8 @@ d_mean_total = mean(d_mean_array);
 
 %Ploteamos los resultados, usando escala logarítmica en el eje de las x:
 
-hold on
+figure();
+hold on;
 plot(p(1,:),d_mean_total(1,:),'o')
 plot(p(1,:), C_mean_total(1,:),'s')
 set(gca,'Xscale','log')
