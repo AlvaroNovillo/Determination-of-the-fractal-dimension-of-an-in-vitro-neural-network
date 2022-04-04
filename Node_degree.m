@@ -9,6 +9,7 @@ for i=1:length(DIVS)
     nf=length(files);
     allGFdegs = [];
     allGCFdegs = [];
+    allGCFdegs_2 = [];
     for n=1:nf
         filename=horzcat(files(n).folder,'/',files(n).name);
         data=open(filename);
@@ -28,54 +29,59 @@ for i=1:length(DIVS)
         [bin,binsize] = conncomp(GF);
         idx = binsize(bin) == max(binsize);
         GCF = subgraph(GF, idx);
+        
+        %Componente gigante de segundo orden 
+        [bin,binsize] = conncomp(GF);
+        second_component = sort(unique(binsize(bin)),'descend');
+        idx_2 = binsize(bin)  == second_component(2);
+        GCF_2 = subgraph(GF, idx_2);
+        N_GCC_2(n,i) = numnodes(GCF_2); 
+        N_GCC_2(N_GCC_2 == 0) = nan;
+        
                     
         %Adjacency matrix for the Full subgraph
         AdGCF = adjacency(GCF); 
         N_GCC(n,i) = numnodes(GCF); 
         N_GCC(N_GCC == 0) = nan;
+        
        
        
         %Node degree distribution
         d_GF = degree(GF);
         d_GCF = degree(GCF);
+        d_GCF_2 = degree(GCF_2);
         
         %Storage of the values 
         
-        if numel(d_GF) > size(allGFdegs,1) && n>1
-            tam=numel(d_GF);
-            allGFdegs(end+1:tam,:) = nan;
-        else
-            tam=size(allGFdegs,1);
-            d_GF(end+1:tam,:) = nan;
-        end
-
-        if numel(d_GCF) > size(allGCFdegs,1) && n>1
-            tam=numel(d_GCF);
-            allGCFdegs(end+1:tam,:) = nan;
-        else
-            tam=size(allGCFdegs,1);
-            d_GCF(end+1:tam,:) = nan;  
-        end
+        [d_GF, allGFdegs] = degree_store(d_GF, allGFdegs,n);
+        [d_GCF, allGCFdegs] = degree_store(d_GCF, allGCFdegs,n);
+        [d_GCF_2, allGCFdegs_2] = degree_store(d_GCF_2, allGCFdegs_2,n);
+        
+        
         allGFdegs  = [allGFdegs d_GF];
         allGCFdegs = [allGCFdegs d_GCF];
+        allGCFdegs_2 = [allGCFdegs_2 d_GCF_2];
 
     end
     mean_d_full(i) =mean(mean(allGFdegs,2,'omitnan'));
     mean_d_giant(i) =mean(mean(allGCFdegs,2,'omitnan'));
+    mean_d_giant_2(i) =mean(mean(allGCFdegs_2,2,'omitnan'));
     
 
     if ismember(DIVS(i),Cases)
         div = DIVS(i)
-        [Full,xf{k},pkf{k}] = degree_plot(mean(allGFdegs,2,'omitnan'), 'Node degree GFull');
-        [Giant,xg{k},pkg{k}] = degree_plot(mean(allGCFdegs,2,'omitnan'), 'Node degree GGiant');
+        [Full,xf{k},pkf{k}] = degree_plot(mean(allGFdegs,2,'omitnan'), 'Node degree Full Network');
+        [Giant,xg{k},pkg{k}] = degree_plot(mean(allGCFdegs,2,'omitnan'), 'Node degree GCC');
+        [Giant_2,xg_2{k},pkg_2{k}] = degree_plot(mean(allGCFdegs_2,2,'omitnan'), 'Node degree GCC2');
         k = k+1;
     end  
 end
 
 %%
 
-deg_dist(xf,pkf,'Degree distribution GFull',Cases)
-deg_dist(xg,pkg,'Degree distribution GGiant',Cases)
+deg_dist(xf,pkf,'Degree distribution Full Network',Cases)
+deg_dist(xg,pkg,'Degree distribution GCC',Cases)
+deg_dist(xg_2,pkg_2,'Degree distribution GCC2',Cases)
 
 
 %%
@@ -83,7 +89,8 @@ figure();
 plot(DIVS,mean_d_full,'-o')
 hold all;
 plot(DIVS,mean_d_giant,'-s')
-legend('Full network','GGC')
+plot(DIVS,mean_d_giant_2,'g-x')
+legend('Full network','GGC','GCC2','Location',"southeast")
 title('Mean Degree distribution')
 xlabel('DIVS')
 ylabel('k')
@@ -93,8 +100,9 @@ figure();
 semilogy(DIVS,mean(N_GF,1,"omitnan"),'-o')
 hold on;
 semilogy(DIVS,mean(N_GCC,1,"omitnan"),'-s')
-legend('Full network','GGC')
-title('Nodes GGC')
+semilogy(DIVS,mean(N_GCC_2,1,"omitnan"),'g-x')
+legend('Full network','GCC','GCC2','Location',"southeast")
+title('Node number evolution')
 xlabel('DIVS')
 ylabel('Nodes')
 hold off
@@ -117,7 +125,7 @@ function deg_dist(x,pk,comp,Cases)
     
     hold all;
     for h = 1:length(x) 
-        plot(x{1,h}(1:end-1),pk{1,h},'o')
+        loglog(x{1,h}(1:end-1),pk{1,h},'o')
         
     end
     hold off;
@@ -128,4 +136,15 @@ function deg_dist(x,pk,comp,Cases)
     
        
 
+end
+
+function [d,alldegs] = degree_store(d, alldegs,n)
+
+    if numel(d) > size(alldegs,1) && n>1
+        tam=numel(d);
+        alldegs(end+1:tam,:) = nan;
+    else
+        tam=size(alldegs,1);
+        d(end+1:tam,:) = nan;
+    end
 end
