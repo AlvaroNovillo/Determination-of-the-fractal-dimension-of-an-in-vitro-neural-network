@@ -23,7 +23,6 @@ GCC = subgraph(G, idx);
 AdGCC = adjacency(GCC);
 X = X(find(idx));
 Y = Y(find(idx));
-%%
 
 Emb = 5;
 %Lets repeat the computation:
@@ -33,6 +32,9 @@ r = exp(linspace(-2,4,300));
 n_0 = initial_node(AdGCC,n_0); %Aleatory initial node
 N = 800; %Length of the RW
 walk = rand_walk(AdGCC,N,n_0); %Random Walker initiation
+highlight(h,'Edges',walk,'EdgeColor','r','LineWidth',1.5)
+legend('Random Walk trajectory')
+%%
 tic
 Cm = EmbDim(Emb,N,walk,X,Y); %Computes the Corr. Sum 
 Cm = smoothdata(Cm,'lowess',6); 
@@ -71,6 +73,7 @@ hold off;
 %By this method, the correlation dimension is still 2. Lets try another
 %rewiring
 %%
+rng(123);
 %Second model:random rewiring
 clear all;
 n = 10;
@@ -80,7 +83,7 @@ m = ones(10,10);
 
 %random removal
 n_edges = length(table2array(G.Edges(:,2)));
-G = rmedge(G,randi(n_edges,7))
+G = rmnode(G,randi(100,40,1))
 
 [bin,binsize] = conncomp(G);
 idx = binsize(bin) == max(binsize);
@@ -90,22 +93,24 @@ AdGCC = adjacency(GCC);
 %Posicion de los nodos de la componente gigante
 X = X(find(idx));
 Y = Y(find(idx));
-plot(GCC,'XData',X,'YData',Y)
 
-%%
-Emb = 6;
+
+Emb = 8;
 %Lets repeat the computation:
 n_0 = 0;
 r = exp(linspace(-2,4,100));
+h = plot(GCC,'XData',X,'YData',Y)
 %Random Walker
 n_0 = initial_node(AdGCC,n_0); %Aleatory initial node
-N = 800; %Length of the RW
+N = 500; %Length of the RW
 walk = rand_walk(AdGCC,N,n_0); %Random Walker initiation
+highlight(h,'Edges',walk,'EdgeColor','r','LineWidth',1.5)
+legend('Random Walk trajectory')
+
 tic
 Cm = EmbDim(Emb,N,walk,X,Y); %Computes the Corr. Sum 
 Cm = smoothdata(Cm,'lowess',6); 
 toc
-%%
 %Plot Cm(r) vs r
 [r_int,int,A] = arrayfun(@(x) new_filter(r,Cm(x,:)),1:Emb,'UniformOutput',false);
 figure();
