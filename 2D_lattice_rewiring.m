@@ -27,28 +27,29 @@ Y = Y(find(idx));
 Emb = 5;
 %Lets repeat the computation:
 n_0 = 0;
-r = exp(linspace(-2,4,300));
+r = -5:15;
 %Random Walker
 n_0 = initial_node(AdGCC,n_0); %Aleatory initial node
 N = 800; %Length of the RW
 walk = rand_walk(AdGCC,N,n_0); %Random Walker initiation
-highlight(h,'Edges',walk,'EdgeColor','r','LineWidth',1.5)
-legend('Random Walk trajectory')
+
+highlight(h,'Edges',[1,4],'EdgeColor','r','LineWidth',1.5)
 %%
 tic
 Cm = EmbDim(Emb,N,walk,X,Y); %Computes the Corr. Sum 
 Cm = smoothdata(Cm,'lowess',6); 
 toc
+
 %%
 %Plot Cm(r) vs r
 [r_int,int,A] = arrayfun(@(x) new_filter(r,Cm(x,:)),1:Emb,'UniformOutput',false);
 figure();
 hold on;
 arrayfun(@(x) paint(r,Cm(x,:),int{x}),1:Emb)
-r_line = [2,3];r2 = r_line.^2;
-plot(r_line, log(r2)-1.29);
+r_line = [5,6.8];r2 = r_line;
+plot(r_line, log(r2)-1.4);
 ylim([0,1]);
-%legend('m=1','','m=2','','m=3','','m=4','','m=5','Fit interval','D = 2','Location','Best');
+legend('m=1','','m=2','','m=3','','m=4','','m=5','Fit interval','D = 2','Location','Best');
 hold off;
 %Visualization of the algorithim
 figure();
@@ -83,7 +84,7 @@ m = ones(10,10);
 
 %random removal
 n_edges = length(table2array(G.Edges(:,2)));
-G = rmnode(G,randi(100,40,1))
+G = rmedge(G,randi(100,20,1))
 
 [bin,binsize] = conncomp(G);
 idx = binsize(bin) == max(binsize);
@@ -93,33 +94,34 @@ AdGCC = adjacency(GCC);
 %Posicion de los nodos de la componente gigante
 X = X(find(idx));
 Y = Y(find(idx));
+h = plot(GCC,'XData',X,'YData',Y);
 
-
-Emb = 8;
+Emb = 5;
 %Lets repeat the computation:
 n_0 = 0;
-r = exp(linspace(-2,4,100));
-h = plot(GCC,'XData',X,'YData',Y)
+r = -5:15;
 %Random Walker
 n_0 = initial_node(AdGCC,n_0); %Aleatory initial node
-N = 500; %Length of the RW
+N = 800; %Length of the RW
 walk = rand_walk(AdGCC,N,n_0); %Random Walker initiation
-highlight(h,'Edges',walk,'EdgeColor','r','LineWidth',1.5)
-legend('Random Walk trajectory')
 
+highlight(h,'Edges',[1,4],'EdgeColor','r','LineWidth',1.5)
+%%
 tic
 Cm = EmbDim(Emb,N,walk,X,Y); %Computes the Corr. Sum 
 Cm = smoothdata(Cm,'lowess',6); 
 toc
+
+%%
 %Plot Cm(r) vs r
 [r_int,int,A] = arrayfun(@(x) new_filter(r,Cm(x,:)),1:Emb,'UniformOutput',false);
 figure();
 hold on;
 arrayfun(@(x) paint(r,Cm(x,:),int{x}),1:Emb)
-r_line = [2,3];r2 = r_line.^2;
-plot(r_line, log(r2)-1.29);
+r_line = [5,6.8];r2 = r_line;
+plot(r_line, log(r2)-1.4);
 ylim([0,1]);
-%legend('m=1','','m=2','','m=3','','m=4','','m=5','Fit interval','D = 2','Location','Best');
+legend('m=1','','m=2','','m=3','','m=4','','m=5','Fit interval','D = 2','Location','Best');
 hold off;
 %Visualization of the algorithim
 figure();
@@ -140,13 +142,12 @@ ylabel('\beta');
 legend('\beta');
 hold off;
 
-
 %%
 function paint(r,Cm,int)
     %Representation of Cm(r) vs r
-    loglog(log(r),Cm(1,1:end),'-o','MarkerSize',4)
-    loglog(log(r(int)), Cm(1,int), 'b-o','MarkerSize',4)
-    xlabel('r');
+    loglog(r,Cm(1,1:end),'-o','MarkerSize',4)
+    loglog(r(int), Cm(1,int), 'b-o','MarkerSize',4)
+    xlabel('ln(r)');
     ylabel('C_m(r)');
     title('Correlation sum');
 end
@@ -156,8 +157,11 @@ function [r_int,int,A] = new_filter(r,Cm)
     gt=find(index~=0);
     lower = min(gt);
     upper = max(gt);
-    int = lower:upper; %Interval where the fit is performed
+    int_prev = lower:upper; 
+    r_int_prev = r(int_prev);
+    int = int_prev(r_int_prev ~=0);%Interval where the fit is performed
     r_int = log(r(int)); %Differential section of r where the fit is performed 
+    
 
 end
 
@@ -185,7 +189,7 @@ function Cm = EmbDim(Emb,N,walk,X,Y)
         for i = 1:N-m
             V(i,:) = walk(i:i+m-1);
         end
-        for r = exp(linspace(-2,4,100))
+        for r = -5:15
             drawnow;
             d = 0;
             heaviside = 0;
